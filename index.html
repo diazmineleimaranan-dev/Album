@@ -1,1 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Little Album</title>
 
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Georgia, serif;
+    background: #f5eee7;
+    color: #5d4941;
+    min-height: 100vh;
+}
+
+/* ---------- OPENING ---------- */
+
+.screen {
+    display: none;
+    min-height: 100vh;
+}
+
+.screen.active {
+    display: flex;
+}
+
+#opening {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 25px;
+}
+
+.open-card {
+    background: #fffaf6;
+    border: 1px solid #e2d2c7;
+    border-radius: 30px;
+    padding: 55px 35px;
+    width: min(90%, 430px);
+    box-shadow: 0 15px 40px #6b504022;
+}
+
+.symbol {
+    font-size: 55px;
+    margin-bottom: 18px;
+}
+
+.open-card h1 {
+    font-size: 38px;
+    font-weight: normal;
+    margin-bottom: 8px;
+}
+
+.open-card p {
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    color: #8b736a;
+}
+
+button {
+    font-family: inherit;
+    border: 0;
+    cursor: pointer;
+}
+
+.enter {
+    padding: 14px 35px;
+    border-radius: 30px;
+    background: #8e6c5f;
+    color: white;
+    font-size: 15px;
+    transition: 0.25s;
+}
+
+.enter:hover {
+    transform: translateY(-3px);
+}
+
+/* ---------- ALBUM ---------- */
+
+#album {
+    flex-direction: column;
+    align-items: center;
+    padding: 35px 18px 50px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header h2 {
+    font-size: 31px;
+    font-weight: normal;
+}
+
+.header p {
+    font-size: 13px;
+    color: #967f75;
+    margin-top: 7px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 9px;
+    margin-bottom: 30px;
+}
+
+.buttons button {
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 24px;
+    background: #fffaf6;
+    color: #6d554c;
+    border: 1px solid #dfcec3;
+    transition: 0.2s;
+}
+
+.buttons button:hover,
+.buttons button.selected {
+    background: #8e6c5f;
+    color: white;
+}
+
+.panel {
+    display: none;
+    width: min(100%, 900px);
+    animation: appear 0.35s ease;
+}
+
+.panel.active {
+    display: block;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---------- PHOTO GALLERY ---------- */
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.photo {
+    background: white;
+    padding: 9px 9px 10px;
+    box-shadow: 0 8px 20px #5d494122;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.photo:nth-child(odd) {
+    transform: rotate(-1deg);
+}
+
+.photo:nth-child(even) {
+    transform: rotate(1deg);
+}
+
+.photo:hover {
+    transform: translateY(-7px) rotate(0);
+}
+
+.photo img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    background: #dfd0c6;
+}
+
+.photo-number {
+    text-align: center;
+    padding: 9px 0 2px;
+    font-size: 12px;
+    color: #a18b82;
+}
+
+/* ---------- MUSIC ---------- */
+
+.music {
+    background: #fffaf6;
+    border: 1px solid #dfcec3;
+    border-radius: 25px;
+    padding: 45px 25px;
+    text-align: center;
+}
+
+.music-icon {
+    font-size: 52px;
+    margin-bottom: 15px;
+}
+
+.music h3 {
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.music p {
+    font-size: 13px;
+    margin-top: 8px;
+    color: #947d74;
+}
+
+.music button {
+    margin-top: 23px;
+    background: #8e6c5f;
+    color: white;
+    padding: 13px 25px;
+    border-radius: 25px;
+}
+
+/* ---------- SURPRISE ---------- */
+
+.surprise {
+    text-align: center;
+    background: #fffaf6;
+    border: 1px solid #dfcec3;
+    border-radius: 25px;
+    padding: 35px 20px;
+}
+
+.surprise button {
+    margin: 18px 0;
+    background: #8e6c5f;
+    color: white;
+    padding: 13px 25px;
+    border-radius: 25px;
+}
+
+.random-photo {
+    display: none;
+    width: min(100%, 450px);
+    margin: auto;
+    padding: 10px;
+    background: white;
+    box-shadow: 0 8px 25px #5d494122;
+}
+
+.random-photo img {
+    width: 100%;
+    display: block;
+}
+
+/* ---------- PHOTO VIEWER ---------- */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: #30241ed9;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    position: relative;
+    width: min(92vw, 650px);
+    max-height: 90vh;
+    background: white;
+    padding: 10px;
+    box-shadow: 0 20px 50px #0005;
+}
+
+.modal-content img {
+    width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+    display: block;
+}
+
+.close {
+    position: absolute;
+    right: -12px;
+    top: -12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #fffaf6;
+    color: #5d4941;
+    font-size: 22px;
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #fffaf6dd;
+    color: #5d4941;
+    font-size: 22px;
+}
+
+.prev {
+    left: 15px;
+}
+
+.next {
+    right: 15px;
+}
+
+footer {
+    margin-top: 35px;
+    font-size: 11px;
+    color: #a28d84;
+}
+
+@media (max-width: 650px) {
+
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .open-card h1 {
+        font-size: 32px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- OPENING PAGE -->
+
+<section id="opening" class="screen active">
+
+    <div class="open-card">
+
+        <div class="symbol">♡</div>
+
+        <h1>Little Album</h1>
+
+        <p>some moments to keep</p>
+
+        <button class="enter" onclick="enterAlbum()">
+            OPEN
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- MAIN ALBUM -->
+
+<section id="album" class="screen">
+
+    <div class="header">
+
+        <h2>♡</h2>
+
+        <p>click, explore, and enjoy</p>
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="buttons">
+
+        <button
+            class="selected"
+            onclick="showPanel('photos', this)">
+            📸 Photos
+        </button>
+
+        <button
+            onclick="showPanel('music', this)">
+            🎵 Music
+        </button>
+
+        <button
+            onclick="showPanel('surprise', this)">
+            ✨ Surprise
+        </button>
+
+    </div>
+
+
+    <!-- PHOTOS -->
+
+    <div id="photos" class="panel active">
+
+        <div class="gallery">
+
+            <div class="photo" onclick="openPhoto(0)">
+                <img src="pic1.jpeg" alt="Photo 1">
+                <div class="photo-number">01</div>
+            </div>
+
+            <div class="photo" onclick="openPhoto(1)">
+                <img src="pic2.jpeg" alt="Photo 2">
+                <div class="photo-number">02</div>
+            </div>
+
+            <div class="photo" onclick="openPhoto(2)">
+                <img src="pic3.jpeg" alt="Photo 3">
+                <div class="photo-number">03</div>
+            </div>
+
+            <div class="photo" onclick="openPhoto(3)">
+                <img src="pic4.jpeg" alt="Photo 4">
+                <div class="photo-number">04</div>
+            </div>
+
+            <div class="photo" onclick="openPhoto(4)">
+                <img src="pic5.jpeg" alt="Photo 5">
+                <div class="photo-number">05</div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MUSIC -->
+
+    <div id="music" class="panel">
+
+        <div class="music">
+
+            <div class="music-icon">
+                🎵
+            </div>
+
+            <h3>Music</h3>
+
+            <p>
+                Press play while looking through the photos.
+            </p>
+
+            <button onclick="toggleMusic()" id="musicBtn">
+                ▶ PLAY
+            </button>
+
+            <audio id="song" loop>
+
+                <source
+                    src="song.mp3"
+                    type="audio/mpeg">
+
+            </audio>
+
+        </div>
+
+    </div>
+
+
+    <!-- SURPRISE -->
+
+    <div id="surprise" class="panel">
+
+        <div class="surprise">
+
+            <h3 style="font-weight: normal;">
+                ✨ Random Memory
+            </h3>
+
+            <p style="font-size: 13px; margin-top: 8px; color: #947d74;">
+                Tap the button and see which photo appears.
+            </p>
+
+            <button onclick="randomPhoto()">
+                SHOW PHOTO
+            </button>
+
+            <div
+                class="random-photo"
+                id="randomPhotoBox">
+
+                <img
+                    id="randomPhotoImg"
+                    src="pic1.jpeg"
+                    alt="Random memory">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <footer>
+        ♡
+    </footer>
+
+</section>
+
+
+<!-- BIG PHOTO VIEWER -->
+
+<div
+    class="modal"
+    id="viewer"
+    onclick="closeViewer(event)">
+
+    <div class="modal-content">
+
+        <button
+            class="close"
+            onclick="closeViewer()">
+            ×
+        </button>
+
+        <button
+            class="arrow prev"
+            onclick="changePhoto(-1); event.stopPropagation()">
+            ‹
+        </button>
+
+        <img
+            id="viewerImg"
+            src="pic1.jpeg"
+            alt="Selected photo">
+
+        <button
+            class="arrow next"
+            onclick="changePhoto(1); event.stopPropagation()">
+            ›
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const photos = [
+    "pic1.jpeg",
+    "pic2.jpeg",
+    "pic3.jpeg",
+    "pic4.jpeg",
+    "pic5.jpeg"
+];
+
+let currentPhoto = 0;
+
+
+/* OPEN ALBUM */
+
+function enterAlbum() {
+
+    document
+        .getElementById("opening")
+        .classList
+        .remove("active");
+
+    document
+        .getElementById("album")
+        .classList
+        .add("active");
+
+}
+
+
+/* SWITCH BUTTONS */
+
+function showPanel(id, button) {
+
+    document
+        .querySelectorAll(".panel")
+        .forEach(panel => {
+            panel.classList.remove("active");
+        });
+
+    document
+        .getElementById(id)
+        .classList
+        .add("active");
+
+    document
+        .querySelectorAll(".buttons button")
+        .forEach(btn => {
+            btn.classList.remove("selected");
+        });
+
+    button.classList.add("selected");
+
+}
+
+
+/* OPEN BIG PHOTO */
+
+function openPhoto(index) {
+
+    currentPhoto = index;
+
+    document
+        .getElementById("viewerImg")
+        .src = photos[currentPhoto];
+
+    document
+        .getElementById("viewer")
+        .classList
+        .add("show");
+
+}
+
+
+/* CLOSE BIG PHOTO */
+
+function closeViewer(event) {
+
+    if (
+        !event ||
+        event.target.id === "viewer"
+    ) {
+
+        document
+            .getElementById("viewer")
+            .classList
+            .remove("show");
+
+    }
+
+}
+
+
+/* NEXT / PREVIOUS PHOTO */
+
+function changePhoto(direction) {
+
+    currentPhoto =
+        (currentPhoto + direction + photos.length)
+        % photos.length;
+
+    document
+        .getElementById("viewerImg")
+        .src = photos[currentPhoto];
+
+}
+
+
+/* RANDOM PHOTO */
+
+function randomPhoto() {
+
+    const index =
+        Math.floor(Math.random() * photos.length);
+
+    document
+        .getElementById("randomPhotoImg")
+        .src = photos[index];
+
+    document
+        .getElementById("randomPhotoBox")
+        .style.display = "block";
+
+}
+
+
+/* MUSIC */
+
+function toggleMusic() {
+
+    const song =
+        document.getElementById("song");
+
+    const button =
+        document.getElementById("musicBtn");
+
+    if (song.paused) {
+
+        song.play()
+            .then(() => {
+                button.textContent = "⏸ PAUSE";
+            })
+            .catch(() => {
+
+                alert(
+                    "Make sure your music file is named song.mp3 and is in the same folder."
+                );
+
+            });
+
+    } else {
+
+        song.pause();
+
+        button.textContent = "▶ PLAY";
+
+    }
+
+}
+
+
+/* KEYBOARD CONTROLS */
+
+document.addEventListener("keydown", function(event) {
+
+    const viewer =
+        document.getElementById("viewer");
+
+    if (!viewer.classList.contains("show")) {
+        return;
+    }
+
+    if (event.key === "ArrowRight") {
+        changePhoto(1);
+    }
+
+    if (event.key === "ArrowLeft") {
+        changePhoto(-1);
+    }
+
+    if (event.key === "Escape") {
+        closeViewer();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
